@@ -143,10 +143,10 @@ METHOD_PACKAGE = \
 		IPA_SUFFIX=".ipa"; \
 	fi; \
 	if [ '$(SLIMMED_ONLY)' = '0' ]; then \
-		zip --symlinks -r $(OUTPUTDIR)/net.kdt.pojavlauncher-$(VERSION)-$(PLATFORM_NAME)$$IPA_SUFFIX Payload; \
+		zip --symlinks -r $(OUTPUTDIR)/com.tomatheloser.malauncher-$(VERSION)-$(PLATFORM_NAME)$$IPA_SUFFIX Payload; \
 	fi; \
 	if [ '$(SLIMMED)' = '1' ] || [ '$(SLIMMED_ONLY)' = '1' ]; then \
-		zip --symlinks -r $(OUTPUTDIR)/net.kdt.pojavlauncher.slimmed-$(VERSION)-$(PLATFORM_NAME)$$IPA_SUFFIX Payload --exclude='Payload/PojavLauncher.app/java_runtimes/*'; \
+		zip --symlinks -r $(OUTPUTDIR)/com.tomatheloser.malauncher.slimmed-$(VERSION)-$(PLATFORM_NAME)$$IPA_SUFFIX Payload --exclude='Payload/MaLauncher.app/java_runtimes/*'; \
 	fi
 
 # Function to download and unpack Java runtimes.
@@ -227,7 +227,7 @@ endif
 all: clean native java jre assets payload package dsym
 
 help:
-	echo 'Makefile to compile PojavLauncher'
+	echo 'Makefile to compile MaLauncher'
 	echo ''
 	echo 'Usage:'
 	echo '    make                                Makes everything under all'
@@ -237,8 +237,8 @@ help:
 	echo '    make java                           Builds the Java app'
 	echo '    make jre                            Downloads/unpacks the iOS JREs'
 	echo '    make assets                         Compiles Assets.xcassets'
-	echo '    make payload                        Makes Payload/PojavLauncher.app'
-	echo '    make package                        Builds ipa of PojavLauncher'
+	echo '    make payload                        Makes Payload/MaLauncher.app'
+	echo '    make package                        Builds ipa of MaLauncher'
 	echo '    make deploy                         Copies files to local iDevice'
 	echo '    make dsym                           Generate debug symbol files'
 	echo '    make clean                          Cleans build directories'
@@ -252,7 +252,7 @@ check:
 	)
 
 native:
-	echo '[PojavLauncher v$(VERSION)] native - start'
+	echo '[MaLauncher v$(VERSION)] native - start'
 	mkdir -p $(WORKINGDIR)
 	cd $(WORKINGDIR) && cmake . \
 		-DCMAKE_BUILD_TYPE=$(CMAKE_BUILD_TYPE) \
@@ -270,15 +270,15 @@ native:
 	cmake --build $(WORKINGDIR) --config $(CMAKE_BUILD_TYPE) -j$(JOBS)
 	#	--target awt_headless awt_xawt libOSMesaOverride.dylib tinygl4angle PojavLauncher
 	rm $(WORKINGDIR)/libawt_headless.dylib
-	echo '[PojavLauncher v$(VERSION)] native - end'
+	echo '[MaLauncher v$(VERSION)] native - end'
 
 java:
-	echo '[PojavLauncher v$(VERSION)] java - start'
+	echo '[MaLauncher v$(VERSION)] java - start'
 	$(MAKE) -C JavaApp -j$(JOBS) BOOTJDK=$(BOOTJDK)
-	echo '[PojavLauncher v$(VERSION)] java - end'
+	echo '[MaLauncher v$(VERSION)] java - end'
 
 jre: native
-	echo '[PojavLauncher v$(VERSION)] jre - start'
+	echo '[MaLauncher v$(VERSION)] jre - start'
 	mkdir -p $(SOURCEDIR)/depends
 	cd $(SOURCEDIR)/depends; \
 	$(call METHOD_JAVA_UNPACK,8,'https://nightly.link/PojavLauncherTeam/android-openjdk-build-multiarch/workflows/build/buildjre8/jre8-ios-aarch64.zip'); \
@@ -293,12 +293,12 @@ jre: native
 	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-8-openjdk/lib; \
 	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-17-openjdk/lib; \
 	if [ -d "$(OUTPUTDIR)/java_runtimes/java-21-openjdk" ]; then cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-21-openjdk/lib; fi
-	echo '[PojavLauncher v$(VERSION)] jre - end'
+	echo '[MaLauncher v$(VERSION)] jre - end'
 
 assets:
-	echo '[PojavLauncher v$(VERSION)] assets - start'
+	echo '[MaLauncher v$(VERSION)] assets - start'
 	if [ '$(IOS)' = '0' ] && [ '$(DETECTPLAT)' = 'Darwin' ]; then \
-		mkdir -p $(WORKINGDIR)/PojavLauncher.app/Base.lproj; \
+		mkdir -p $(WORKINGDIR)/MaLauncher.app/Base.lproj; \
 		xcrun actool $(SOURCEDIR)/Natives/Assets.xcassets \
 			--compile $(SOURCEDIR)/Natives/resources \
 			--platform iphoneos \
@@ -310,71 +310,71 @@ assets:
 	else \
 		echo 'Due to the required tools not being available, you cannot compile the extras for PojavLauncher with an iOS device.'; \
 	fi
-	echo '[PojavLauncher v$(VERSION)] assets - end'
+	echo '[MaLauncher v$(VERSION)] assets - end'
 
 payload: native java jre assets
-	echo '[PojavLauncher v$(VERSION)] payload - start'
-	$(call METHOD_DIRCHECK,$(WORKINGDIR)/PojavLauncher.app/libs)
-	$(call METHOD_DIRCHECK,$(WORKINGDIR)/PojavLauncher.app/libs_caciocavallo)
-	$(call METHOD_DIRCHECK,$(WORKINGDIR)/PojavLauncher.app/libs_caciocavallo17)
-	cp -R $(SOURCEDIR)/Natives/resources/en.lproj/LaunchScreen.storyboardc $(WORKINGDIR)/PojavLauncher.app/Base.lproj/ || exit 1
-	cp -R $(SOURCEDIR)/Natives/resources/* $(WORKINGDIR)/PojavLauncher.app/ || exit 1
-	cp $(WORKINGDIR)/*.dylib $(WORKINGDIR)/PojavLauncher.app/Frameworks/ || exit 1
-	cp -R $(SOURCEDIR)/JavaApp/libs/others/* $(WORKINGDIR)/PojavLauncher.app/libs/ || exit 1
-	cp $(SOURCEDIR)/JavaApp/build/*.jar $(WORKINGDIR)/PojavLauncher.app/libs/ || exit 1
-	cp -R $(SOURCEDIR)/JavaApp/libs/caciocavallo/* $(WORKINGDIR)/PojavLauncher.app/libs_caciocavallo || exit 1
-	cp -R $(SOURCEDIR)/JavaApp/libs/caciocavallo17/* $(WORKINGDIR)/PojavLauncher.app/libs_caciocavallo17 || exit 1
+	echo '[MaLauncher v$(VERSION)] payload - start'
+	$(call METHOD_DIRCHECK,$(WORKINGDIR)/MaLauncher.app/libs)
+	$(call METHOD_DIRCHECK,$(WORKINGDIR)/MaLauncher.app/libs_caciocavallo)
+	$(call METHOD_DIRCHECK,$(WORKINGDIR)/MaLauncher.app/libs_caciocavallo17)
+	cp -R $(SOURCEDIR)/Natives/resources/en.lproj/LaunchScreen.storyboardc $(WORKINGDIR)/MaLauncher.app/Base.lproj/ || exit 1
+	cp -R $(SOURCEDIR)/Natives/resources/* $(WORKINGDIR)/MaLauncher.app/ || exit 1
+	cp $(WORKINGDIR)/*.dylib $(WORKINGDIR)/MaLauncher.app/Frameworks/ || exit 1
+	cp -R $(SOURCEDIR)/JavaApp/libs/others/* $(WORKINGDIR)/MaLauncher.app/libs/ || exit 1
+	cp $(SOURCEDIR)/JavaApp/build/*.jar $(WORKINGDIR)/MaLauncher.app/libs/ || exit 1
+	cp -R $(SOURCEDIR)/JavaApp/libs/caciocavallo/* $(WORKINGDIR)/MaLauncher.app/libs_caciocavallo || exit 1
+	cp -R $(SOURCEDIR)/JavaApp/libs/caciocavallo17/* $(WORKINGDIR)/MaLauncher.app/libs_caciocavallo17 || exit 1
 	$(call METHOD_DIRCHECK,$(OUTPUTDIR)/Payload)
-	cp -R $(WORKINGDIR)/PojavLauncher.app $(OUTPUTDIR)/Payload
+	cp -R $(WORKINGDIR)/MaLauncher.app $(OUTPUTDIR)/Payload
 	if [ '$(SLIMMED_ONLY)' != '1' ]; then \
-		cp -R $(OUTPUTDIR)/java_runtimes $(OUTPUTDIR)/Payload/PojavLauncher.app; \
+		cp -R $(OUTPUTDIR)/java_runtimes $(OUTPUTDIR)/Payload/MaLauncher.app; \
 	fi
-	ldid -S $(OUTPUTDIR)/Payload/PojavLauncher.app; \
+	ldid -S $(OUTPUTDIR)/Payload/MaLauncher.app; \
 	if [ '$(TROLLSTORE_JIT_ENT)' == '1' ]; then \
-		ldid -S$(SOURCEDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/PojavLauncher.app/PojavLauncher; \
+		ldid -S$(SOURCEDIR)/entitlements.trollstore.xml $(OUTPUTDIR)/Payload/MaLauncher.app/MaLauncher; \
 	elif [ '$(PLATFORM)' == '6' ]; then \
-		ldid -S$(SOURCEDIR)/entitlements.codesign.xml $(OUTPUTDIR)/Payload/PojavLauncher.app/PojavLauncher; \
+		ldid -S$(SOURCEDIR)/entitlements.codesign.xml $(OUTPUTDIR)/Payload/MaLauncher.app/MaLauncher; \
 	else \
-		ldid -S$(SOURCEDIR)/entitlements.sideload.xml $(OUTPUTDIR)/Payload/PojavLauncher.app/PojavLauncher; \
+		ldid -S$(SOURCEDIR)/entitlements.sideload.xml $(OUTPUTDIR)/Payload/MaLauncher.app/MaLauncher; \
 	fi
 	chmod -R 755 $(OUTPUTDIR)/Payload
 	if [ '$(PLATFORM)' != '2' ]; then \
-		$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/PojavLauncher.app,$(call METHOD_CHANGE_PLAT,$(PLATFORM),$$file)); \
+		$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/MaLauncher.app,$(call METHOD_CHANGE_PLAT,$(PLATFORM),$$file)); \
 		$(call METHOD_MACHO,$(OUTPUTDIR)/java_runtimes,$(call METHOD_CHANGE_PLAT,$(PLATFORM),$$file)); \
 	fi
-	echo '[PojavLauncher v$(VERSION)] payload - end'
+	echo '[MaLauncher v$(VERSION)] payload - end'
 
 deploy:
-	echo '[PojavLauncher v$(VERSION)] deploy - start'
+	echo '[MaLauncher v$(VERSION)] deploy - start'
 	cd $(OUTPUTDIR); \
 	if [ '$(IOS)' = '1' ]; then \
-		ldid -S $(WORKINGDIR)/PojavLauncher.app || exit 1; \
-		ldid -S$(SOURCEDIR)/entitlements.trollstore.xml $(WORKINGDIR)/PojavLauncher.app/PojavLauncher || exit 1; \
-		sudo mv $(WORKINGDIR)/*.dylib $(PREFIX)Applications/PojavLauncher.app/Frameworks/ || exit 1; \
-		sudo mv $(WORKINGDIR)/PojavLauncher.app/PojavLauncher $(PREFIX)Applications/PojavLauncher.app/PojavLauncher || exit 1; \
-		sudo mv $(SOURCEDIR)/JavaApp/build/*.jar $(PREFIX)Applications/PojavLauncher.app/libs/ || exit 1; \
-		cd $(PREFIX)Applications/PojavLauncher.app/Frameworks || exit 1; \
-		sudo chown -R 501:501 $(PREFIX)Applications/PojavLauncher.app/* || exit 1; \
+		ldid -S $(WORKINGDIR)/MaLauncher.app || exit 1; \
+		ldid -S$(SOURCEDIR)/entitlements.trollstore.xml $(WORKINGDIR)/MaLauncher.app/MaLauncher || exit 1; \
+		sudo mv $(WORKINGDIR)/*.dylib $(PREFIX)Applications/MaLauncher.app/Frameworks/ || exit 1; \
+		sudo mv $(WORKINGDIR)/MaLauncher.app/MaLauncher $(PREFIX)Applications/MaLauncher.app/MaLauncher || exit 1; \
+		sudo mv $(SOURCEDIR)/JavaApp/build/*.jar $(PREFIX)Applications/MaLauncher.app/libs/ || exit 1; \
+		cd $(PREFIX)Applications/MaLauncher.app/Frameworks || exit 1; \
+		sudo chown -R 501:501 $(PREFIX)Applications/MaLauncher.app/* || exit 1; \
 	elif [ '$(IOS)' = '0' ] && [ '$(DETECTPLAT)' = 'Darwin' ]; then \
 		if [ '$(PLATFORM)' != '2' ] || [ '$(TEAMID)' = '-1' ] || [ '$(SIGNING_TEAMID)' = '-1' ] || [ '$(PROVISIONING)' = '-1' ]; then \
 			echo 'Configuration not supported for deploy recipe.'; \
 		else \
 			$(call METHOD_PACKAGE); \
 			if [ '$(SLIMMED_ONLY)' = '0' ]; then \
-				open $(OUTPUTDIR)/net.kdt.pojavlauncher-$(VERSION)-$(PLATFORM_NAME).ipa; \
+				open $(OUTPUTDIR)/com.tomatheloser.malauncher-$(VERSION)-$(PLATFORM_NAME).ipa; \
 			else \
-				open $(OUTPUTDIR)/net.kdt.pojavlauncher.slimmed-$(VERSION)-$(PLATFORM_NAME).ipa; \
+				open $(OUTPUTDIR)/com.tomatheloser.malauncher.slimmed-$(VERSION)-$(PLATFORM_NAME).ipa; \
 			fi; \
 		fi; \
 	else \
 		echo 'Device not supported for deploy recipe.'; \
 	fi
-	echo '[PojavLauncher v$(VERSION)] deploy - end'
+	echo '[MaLauncher v$(VERSION)] deploy - end'
 
 package: payload
-	echo '[PojavLauncher v$(VERSION)] package - start'
+	echo '[MaLauncher v$(VERSION)] package - start'
 	if [ '$(TEAMID)' != '-1' ] && [ '$(SIGNING_TEAMID)' != '-1' ] && [ -f '$(PROVISIONING)' ] && [ '$(DETECTPLAT)' = 'Darwin' ]; then \
-		printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n	<key>application-identifier</key>\n	<string>$(TEAMID).net.kdt.pojavlauncher</string>\n	<key>com.apple.developer.team-identifier</key>\n	<string>$(TEAMID)</string>\n	<key>get-task-allow</key>\n	<true/>\n	<key>keychain-access-groups</key>\n	<array>\n	<string>$(TEAMID).*</string>\n	<string>com.apple.token</string>\n	</array>\n</dict>\n</plist>' > entitlements.codesign.xml; \
+		printf '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n<plist version="1.0">\n<dict>\n	<key>application-identifier</key>\n	<string>$(TEAMID).com.tomatheloser.malauncher</string>\n	<key>com.apple.developer.team-identifier</key>\n	<string>$(TEAMID)</string>\n	<key>get-task-allow</key>\n	<true/>\n	<key>keychain-access-groups</key>\n	<array>\n	<string>$(TEAMID).*</string>\n	<string>com.apple.token</string>\n	</array>\n</dict>\n</plist>' > entitlements.codesign.xml; \
 		$(MAKE) codesign; \
 		rm -rf entitlements.codesign.xml; \
 	else \
@@ -383,27 +383,27 @@ package: payload
 	cd $(OUTPUTDIR); \
 	$(call METHOD_PACKAGE); \
 	zip --symlinks -r $(OUTPUTDIR)/java_runtimes.zip java_runtimes; \
-	echo '[PojavLauncher v$(VERSION)] package - end'
+	echo '[MaLauncher v$(VERSION)] package - end'
 	
 dsym: payload
-	echo '[PojavLauncher v$(VERSION)] dsym - start'
-	dsymutil --arch arm64 $(OUTPUTDIR)/Payload/PojavLauncher.app/PojavLauncher; \
-	rm -rf $(OUTPUTDIR)/PojavLauncher.dSYM; \
-	mv $(OUTPUTDIR)/Payload/PojavLauncher.app/PojavLauncher.dSYM $(OUTPUTDIR)/PojavLauncher.dSYM
-	echo '[PojavLauncher v$(VERSION)] dsym - end'
+	echo '[MaLauncher v$(VERSION)] dsym - start'
+	dsymutil --arch arm64 $(OUTPUTDIR)/Payload/MaLauncher.app/MaLauncher; \
+	rm -rf $(OUTPUTDIR)/MaLauncher.dSYM; \
+	mv $(OUTPUTDIR)/Payload/MaLauncher.app/MaLauncher.dSYM $(OUTPUTDIR)/MaLauncher.dSYM
+	echo '[MaLauncher v$(VERSION)] dsym - end'
 	
 codesign:
-	echo '[PojavLauncher v$(VERSION)] codesign - start'
-	cp '$(PROVISIONING)' $(OUTPUTDIR)/Payload/PojavLauncher.app/embedded.mobileprovision
-	$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/PojavLauncher.app,$(call METHOD_CODESIGN,$(SIGNING_TEAMID),$$file))
+	echo '[MaLauncher v$(VERSION)] codesign - start'
+	cp '$(PROVISIONING)' $(OUTPUTDIR)/Payload/MaLauncher.app/embedded.mobileprovision
+	$(call METHOD_MACHO,$(OUTPUTDIR)/Payload/MaLauncher.app,$(call METHOD_CODESIGN,$(SIGNING_TEAMID),$$file))
 	$(call METHOD_MACHO,$(OUTPUTDIR)/java_runtimes,$(call METHOD_CODESIGN,$(SIGNING_TEAMID),$$file))
-	echo '[PojavLauncher v$(VERSION)] codesign - end'
+	echo '[MaLauncher v$(VERSION)] codesign - end'
 clean:
-	echo '[PojavLauncher v$(VERSION)] clean - start'
+	echo '[MaLauncher v$(VERSION)] clean - start'
 	rm -rf $(WORKINGDIR)
 	rm -rf JavaApp/build
 	rm -rf $(OUTPUTDIR)
-	echo '[PojavLauncher v$(VERSION)] clean - end'
+	echo '[MaLauncher v$(VERSION)] clean - end'
 
 		
 

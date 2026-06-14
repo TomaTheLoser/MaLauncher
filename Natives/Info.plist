@@ -9,9 +9,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>PojavLauncher</string>
+	<string>MaLauncher</string>
 	<key>CFBundleExecutable</key>
-	<string>PojavLauncher</string>
+	<string>MaLauncher</string>
 	<key>CFBundleIcons</key>
 	<dict>
 		<key>CFBundleAlternateIcons</key>
@@ -74,30 +74,30 @@
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>net.kdt.pojavlauncher</string>
+	<string>com.tomatheloser.malauncher</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>PojavLauncher</string>
+	<string>MaLauncher</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0</string>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>net.kdt.pojavlauncher.urlscheme</string>
+			<string>com.tomatheloser.malauncher.urlscheme</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>pojavlauncher</string>
+				<string>malauncher</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3.0</string>
+	<string>1.0</string>
 	<key>GCSupportsControllerUserInteraction</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -126,9 +126,9 @@
 		<string>_altserver._tcp</string>
 	</array>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>PojavLauncher uses the local network to find and communicate with AltServer and LAN servers.</string>
+	<string>MaLauncher uses the local network to find and communicate with AltServer and LAN servers.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>PojavLauncher uses the microphone to enable support for voice chat mods.</string>
+	<string>MaLauncher uses the microphone to enable support for voice chat mods.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

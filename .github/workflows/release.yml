@@ -5,20 +5,7 @@ on:
 
 jobs:
   build:
-    name: Release build
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - platform: 2
-            platform_name: ios
-          - platform: 3
-            platform_name: tvos
-          - platform: 7
-            platform_name: iossimulator
-          - platform: 8
-            platform_name: tvossimulator
-
+    name: Release build (iOS)
     runs-on: macos-latest
     steps:
       - name: Checkout repository
@@ -70,7 +57,6 @@ jobs:
           git commit -am "CI: Update gl4es"
           git push
 
-      
       - name: Get JRE8
         run: |
           mkdir -p depends
@@ -84,47 +70,32 @@ jobs:
       - name: Get JRE21
         run: |
           mkdir -p depends
-          echo "Skipping JRE21 - not needed for MC 1.12.2"
-          
+          echo "Skipping JRE21 - not needed"
+
       - name: Install gmake
         run: brew install make
 
-        
       - name: Install JDK 8
         run: |
           brew install --cask temurin@8
           echo "JAVA_HOME=$(/usr/libexec/java_home -v 1.8)" >> $GITHUB_ENV
-      
+
       - name: Install ldid
         run: brew install ldid
-      
-      - name: Build for ${{ matrix.platform_name }}
+
+      - name: Build for iOS
         run: |
           export RUNNER=1
-          if [ "${{ matrix.platform_name }}" == "ios" ]; then
-            gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }}
-            gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }} TROLLSTORE_JIT_ENT=1
-          elif [ "${{ matrix.platform_name }}" == "tvos" ]; then
-            gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }} TROLLSTORE_JIT_ENT=1
-          else
-            gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=${{ matrix.platform }}
-          fi
+          gmake -j$(sysctl -n hw.ncpu) dsym package PLATFORM=2
 
-      - name: Upload regular ipa
+      - name: Upload MaLauncher.ipa
         uses: actions/upload-artifact@main
         with:
-          name: net.kdt.pojavlauncher-${{ matrix.platform_name }}.ipa
-          path: artifacts/net.kdt.pojavlauncher-*-${{ matrix.platform_name }}.ipa
+          name: MaLauncher.ipa
+          path: artifacts/com.tomatheloser.malauncher-*-ios.ipa
 
-      - name: Upload regular tipa
+      - name: Upload MaLauncher.dSYM
         uses: actions/upload-artifact@main
         with:
-          name: net.kdt.pojavlauncher-${{ matrix.platform_name }}.tipa
-          path: artifacts/net.kdt.pojavlauncher-*-${{ matrix.platform_name }}-trollstore.tipa
-
-      - name: Upload PojavLauncher.dSYM
-        uses: actions/upload-artifact@main
-        if: matrix.platform_name == 'ios'
-        with:
-          name: PojavLauncher.dSYM
-          path: artifacts/PojavLauncher.dSYM
+          name: MaLauncher.dSYM
+          path: artifacts/MaLauncher.dSYM

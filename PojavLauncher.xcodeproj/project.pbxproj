@@ -51,7 +51,7 @@
 			);
 			name = PojavLauncher;
 			passBuildSettingsInEnvironment = 1;
-			productName = PojavLauncher;
+			productName = MaLauncher;
 		};
 /* End PBXLegacyTarget section */
 

@@ -99,7 +99,7 @@ else
 $(error PLATFORM is not valid.)
 endif
 
-POJAV_BUNDLE_DIR      ?= $(OUTPUTDIR)/PojavLauncher.app
+POJAV_BUNDLE_DIR      ?= $(OUTPUTDIR)/MaLauncher.app
 POJAV_JRE8_DIR        ?= $(SOURCEDIR)/depends/java-8-openjdk
 POJAV_JRE17_DIR       ?= $(SOURCEDIR)/depends/java-17-openjdk
 POJAV_JRE21_DIR       ?= $(SOURCEDIR)/depends/java-21-openjdk

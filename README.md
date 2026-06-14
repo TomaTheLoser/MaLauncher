@@ -46,8 +46,8 @@
 
 ### Jailbroken (Recommended)
 
-1. Go to [**Releases**](../../releases/latest) and download the latest `net.kdt.pojavlauncher-ios.ipa`
-2. Open the `.ipa` file with **eSign** or your preferred IPA installer
+1. Go to [**Releases**](../../releases/latest) and download the latest `.ipa`
+2. Open it with **eSign** or your preferred IPA installer
 3. Trust the app if prompted in **Settings → General → VPN & Device Management**
 4. Launch **MaLauncher** — JIT is enabled automatically
 5. Choose or create an account and start playing

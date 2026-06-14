@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="Natives/resources/Assets.xcassets/AppIcon.appiconset/AppIcon-60@2x.png" width="120" height="120" alt="MaLauncher Icon">
+
 
 # MaLauncher
 

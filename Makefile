@@ -154,11 +154,11 @@ METHOD_JAVA_UNPACK = \
 	cd $(SOURCEDIR)/depends; \
 	if [ ! -f "java-$(1)-openjdk/release" ]; then \
 		if [ "$(1)" = "8" ]; then \
-			curl -L -o java8.zip "https://github.com/TomaTheLoser/PojavLauncher_IOS-NO-MICROSOFT-ACCOUNT-NEEDED/releases/download/Jre_8_IOS/java-8-openjdk.zip"; \
+			curl -L -o java8.zip "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_8_IOS/java-8-openjdk.zip"; \
 			unzip -o java8.zip; \
 			rm java8.zip; \
 		elif [ "$(1)" = "17" ]; then \
-			curl -L -o java17.zip "https://github.com/TomaTheLoser/PojavLauncher_IOS-NO-MICROSOFT-ACCOUNT-NEEDED/releases/download/Jre_17_IOS/java-17-openjdk.zip"; \
+			curl -L -o java17.zip "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_17_IOS/java-17-openjdk.zip"; \
 			unzip -o java17.zip; \
 			rm java17.zip; \
 		else \

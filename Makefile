@@ -292,7 +292,16 @@ jre: native
 	if [ -d "$(POJAV_JRE21_DIR)" ]; then cp -R $(POJAV_JRE21_DIR) $(OUTPUTDIR)/java_runtimes; fi; \
 	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-8-openjdk/lib; \
 	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-17-openjdk/lib; \
-	if [ -d "$(OUTPUTDIR)/java_runtimes/java-21-openjdk" ]; then cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-21-openjdk/lib; fi
+	if [ -d "$(OUTPUTDIR)/java_runtimes/java-21-openjdk" ]; then cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-21-openjdk/lib; fi; \
+	if [ ! -d "$(SOURCEDIR)/depends/java-8-openjdk-halfjit" ]; then \
+		curl -L -o $(SOURCEDIR)/depends/halfjit.tar.xz "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_8_Half_JIT/jre8-halfjit-aarch64-ios.tar.xz"; \
+		mkdir -p $(SOURCEDIR)/depends/halfjit-tmp; \
+		tar xvf $(SOURCEDIR)/depends/halfjit.tar.xz -C $(SOURCEDIR)/depends/halfjit-tmp; \
+		mv $(SOURCEDIR)/depends/halfjit-tmp/java-8-openjdk $(SOURCEDIR)/depends/java-8-openjdk-halfjit; \
+		rm -rf $(SOURCEDIR)/depends/halfjit-tmp $(SOURCEDIR)/depends/halfjit.tar.xz; \
+	fi; \
+	cp -R $(SOURCEDIR)/depends/java-8-openjdk-halfjit $(OUTPUTDIR)/java_runtimes; \
+	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-8-openjdk-halfjit/lib
 	echo '[MaLauncher v$(VERSION)] jre - end'
 
 assets:

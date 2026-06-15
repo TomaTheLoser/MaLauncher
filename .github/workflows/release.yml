@@ -83,9 +83,11 @@ jobs:
       - name: Install ldid
         run: brew install ldid
 
-      - name: Replace branding in localizations
+      - name: Replace branding in localizations and Java files
         run: |
           find . -name "Localizable.strings" -exec sed -i '' 's/PojavLauncher/MaLauncher/g' {} \;
+          find . -name "*.java" -exec sed -i '' 's|"/PojavLauncher"|"/MaLauncher"|g' {} \;
+          find . -name "*.java" -exec sed -i '' "s|'PojavLauncher'|'MaLauncher'|g" {} \;
 
       - name: Build for iOS
         run: |

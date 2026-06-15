@@ -277,6 +277,7 @@ java:
 	$(MAKE) -C JavaApp -j$(JOBS) BOOTJDK=$(BOOTJDK)
 	echo '[MaLauncher v$(VERSION)] java - end'
 
+
 jre: native
 	echo '[MaLauncher v$(VERSION)] jre - start'
 	mkdir -p $(SOURCEDIR)/depends
@@ -298,6 +299,7 @@ jre: native
 		mkdir -p $(SOURCEDIR)/depends/halfjit-tmp; \
 		tar xvf $(SOURCEDIR)/depends/halfjit.tar.xz -C $(SOURCEDIR)/depends/halfjit-tmp; \
 		mv $(SOURCEDIR)/depends/halfjit-tmp/java-8-openjdk $(SOURCEDIR)/depends/java-8-openjdk-halfjit; \
+		echo "JAVA_VERSION=1.8.0-halfjit" > $(SOURCEDIR)/depends/java-8-openjdk-halfjit/release; \
 		rm -rf $(SOURCEDIR)/depends/halfjit-tmp $(SOURCEDIR)/depends/halfjit.tar.xz; \
 	fi; \
 	cp -R $(SOURCEDIR)/depends/java-8-openjdk-halfjit $(OUTPUTDIR)/java_runtimes; \

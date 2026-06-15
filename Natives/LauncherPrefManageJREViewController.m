@@ -85,11 +85,127 @@ static WFWorkflowProgressView* currentProgressView;
 }
 
 - (void)actionImportRuntime {
-    UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc]
-        initForOpeningContentTypes:@[[UTType typeWithMIMEType:@"application/x-xz"]]];
-    documentPicker.delegate = self;
-    documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:documentPicker animated:YES completion:nil];
+    UIAlertController *sheet = [UIAlertController alertControllerWithTitle:localize(@"preference.manage_runtime.add", nil) message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+
+    UIAlertAction *importFile = [UIAlertAction actionWithTitle:localize(@"preference.manage_runtime.import_files", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIDocumentPickerViewController *documentPicker = [[UIDocumentPickerViewController alloc]
+            initForOpeningContentTypes:@[[UTType typeWithMIMEType:@"application/x-xz"]]];
+        documentPicker.delegate = self;
+        documentPicker.modalPresentationStyle = UIModalPresentationFormSheet;
+        [self presentViewController:documentPicker animated:YES completion:nil];
+    }];
+
+    UIAlertAction *downloadFromMa = [UIAlertAction actionWithTitle:@"Download from MaLauncher" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        [self actionDownloadFromMaLauncher];
+    }];
+
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:localize(@"OK", nil) style:UIAlertActionStyleCancel handler:nil];
+
+    [sheet addAction:importFile];
+    [sheet addAction:downloadFromMa];
+    [sheet addAction:cancel];
+    [self presentViewController:sheet animated:YES completion:nil];
+}
+
+- (void)actionDownloadFromMaLauncher {
+    NSURL *apiURL = [NSURL URLWithString:@"https://api.github.com/repos/TomaTheLoser/MaLauncher/releases"];
+    NSURLRequest *request = [NSURLRequest requestWithURL:apiURL];
+    [[[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        if (error || !data) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                showDialog(localize(@"Error", nil), error.localizedDescription ?: @"Failed to fetch runtimes from MaLauncher.");
+            });
+            return;
+        }
+        NSArray *releases = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSMutableArray *runtimeAssets = [NSMutableArray new];
+        for (NSDictionary *release in releases) {
+            NSString *tag = release[@"tag_name"];
+            if (![tag hasPrefix:@"Jre_"]) continue;
+            for (NSDictionary *asset in release[@"assets"]) {
+                NSString *name = asset[@"name"];
+                NSString *url = asset[@"browser_download_url"];
+                if ([name hasSuffix:@".tar.xz"] || [name hasSuffix:@".zip"]) {
+                    [runtimeAssets addObject:@{@"name": name, @"url": url, @"tag": tag}];
+                }
+            }
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (runtimeAssets.count == 0) {
+                showDialog(@"No runtimes found", @"No downloadable Java runtimes were found in MaLauncher releases.");
+                return;
+            }
+            UIAlertController *picker = [UIAlertController alertControllerWithTitle:@"Select Runtime" message:@"Choose a Java runtime to download and install" preferredStyle:UIAlertControllerStyleActionSheet];
+            for (NSDictionary *asset in runtimeAssets) {
+                UIAlertAction *action = [UIAlertAction actionWithTitle:asset[@"name"] style:UIAlertActionStyleDefault handler:^(UIAlertAction *a) {
+                    [self downloadRuntimeFromURL:asset[@"url"] name:asset[@"name"]];
+                }];
+                [picker addAction:action];
+            }
+            UIAlertAction *cancel = [UIAlertAction actionWithTitle:localize(@"OK", nil) style:UIAlertActionStyleCancel handler:nil];
+            [picker addAction:cancel];
+            [self presentViewController:picker animated:YES completion:nil];
+        });
+    }] resume];
+}
+
+- (void)downloadRuntimeFromURL:(NSString *)urlString name:(NSString *)fileName {
+    LauncherNavigationController *nav = (id)self.navigationController;
+    [nav setInteractionEnabled:NO forDownloading:NO];
+
+    NSString *tmpPath = [NSTemporaryDirectory() stringByAppendingPathComponent:fileName];
+    NSString *outName;
+    if ([fileName hasSuffix:@".tar.xz"]) {
+        outName = [fileName substringToIndex:fileName.length - 7];
+    } else if ([fileName hasSuffix:@".zip"]) {
+        outName = [fileName substringToIndex:fileName.length - 4];
+    } else {
+        outName = fileName;
+    }
+    NSString *outPath = [NSString stringWithFormat:@"%s/java_runtimes/%@", getenv("POJAV_HOME"), outName];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:urlString]];
+    NSURLSessionDownloadTask *task = [[NSURLSession sharedSession] downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+        if (error) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                showDialog(localize(@"Error", nil), error.localizedDescription);
+                [nav setInteractionEnabled:YES forDownloading:NO];
+            });
+            return;
+        }
+        [[NSFileManager defaultManager] moveItemAtURL:location toURL:[NSURL fileURLWithPath:tmpPath] error:nil];
+
+        NSUInteger xzSize = [NSFileManager.defaultManager attributesOfItemAtPath:tmpPath error:nil].fileSize;
+        NSProgress *totalProgress = [NSProgress progressWithTotalUnitCount:xzSize];
+        NSProgress *fileProgress = [NSProgress progressWithTotalUnitCount:0];
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            nav.progressViewMain.observedProgress = totalProgress;
+            nav.progressViewSub.observedProgress = fileProgress;
+        });
+
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            NSString *extractError = [LauncherPrefManageJREViewController extractTarXZ:tmpPath to:outPath progress:totalProgress fileProgress:fileProgress fileCallback:^(NSString *fname) {
+                NSString *completedSize = [NSByteCountFormatter stringFromByteCount:fileProgress.completedUnitCount countStyle:NSByteCountFormatterCountStyleMemory];
+                NSString *totalSize = [NSByteCountFormatter stringFromByteCount:fileProgress.totalUnitCount countStyle:NSByteCountFormatterCountStyleMemory];
+                nav.progressText.text = [NSString stringWithFormat:@"(%@ / %@) %@", completedSize, totalSize, fname];
+            }];
+            [[NSFileManager defaultManager] removeItemAtPath:tmpPath error:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [nav setInteractionEnabled:YES forDownloading:NO];
+                nav.progressViewMain.observedProgress = nil;
+                nav.progressViewSub.observedProgress = nil;
+                nav.progressText.text = @"";
+                if (extractError) {
+                    showDialog(localize(@"Error", nil), extractError);
+                } else {
+                    [self loadJREList];
+                    [self.tableView reloadData];
+                }
+            });
+        });
+    }];
+    [task resume];
 }
 
 - (void)documentPicker:(UIDocumentPickerViewController *)controller didPickDocumentAtURL:(NSURL *)url {

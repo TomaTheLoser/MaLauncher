@@ -299,7 +299,7 @@ jre: native
 		mkdir -p $(SOURCEDIR)/depends/halfjit-tmp; \
 		tar xvf $(SOURCEDIR)/depends/halfjit.tar.xz -C $(SOURCEDIR)/depends/halfjit-tmp; \
 		mv $(SOURCEDIR)/depends/halfjit-tmp/java-8-openjdk $(SOURCEDIR)/depends/java-8-openjdk-halfjit; \
-		printf 'JAVA_VERSION="1.8.0-internal"\nOS_NAME="iOS"\nOS_ARCH="aarch64"\nJAVA_RUNTIME_NAME="OpenJDK Runtime Environment"\nJAVA_VM_NAME="OpenJDK 64-Bit Server VM"\n' > $(SOURCEDIR)/depends/java-8-openjdk-halfjit/release; \
+		printf 'JAVA_VERSION="1.8.0-halfjit"\nOS_NAME="iOS"\nOS_ARCH="aarch64"\nJAVA_RUNTIME_NAME="OpenJDK Runtime Environment (Half-JIT)"\nJAVA_VM_NAME="OpenJDK 64-Bit Zero VM"\n' > $(SOURCEDIR)/depends/java-8-openjdk-halfjit/release; \
 		rm -rf $(SOURCEDIR)/depends/halfjit-tmp $(SOURCEDIR)/depends/halfjit.tar.xz; \
 	fi; \
 	cp -R $(SOURCEDIR)/depends/java-8-openjdk-halfjit $(OUTPUTDIR)/java_runtimes; \

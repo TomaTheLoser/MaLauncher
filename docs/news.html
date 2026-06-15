@@ -1,1 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>MaLauncher News</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  body {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    padding: 20px 16px 40px;
+  }
+
+  .logo {
+    text-align: center;
+    padding: 30px 0 20px;
+  }
+
+  .logo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;
+  }
+
+  .logo h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: 12px;
+    letter-spacing: 1px;
+  }
+
+  .logo p {
+    font-size: 13px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  .badge {
+    display: inline-block;
+    background: #2ecc71;
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .section {
+    background: #242424;
+    border-radius: 14px;
+    padding: 18px;
+    margin-top: 16px;
+    border: 1px solid #2e2e2e;
+  }
+
+  .section h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+
+  .release-tag {
+    font-size: 11px;
+    background: #2a2a2a;
+    color: #aaa;
+    padding: 2px 8px;
+    border-radius: 6px;
+    float: right;
+    font-family: monospace;
+  }
+
+  .changelog-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #2e2e2e;
+  }
+
+  .changelog-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .changelog-icon {
+    font-size: 18px;
+    min-width: 28px;
+    text-align: center;
+    margin-top: 1px;
+  }
+
+  .changelog-text h3 {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+
+  .changelog-text p {
+    font-size: 13px;
+    color: #999;
+    line-height: 1.5;
+  }
+
+  .tip-box {
+    background: #1e2d1e;
+    border: 1px solid #2e4a2e;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  .tip-box h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2ecc71;
+    margin-bottom: 6px;
+  }
+
+  .tip-box p {
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.5;
+  }
+
+  .warning-box {
+    background: #2d1e1e;
+    border: 1px solid #4a2e2e;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 12px;
+  }
+
+  .warning-box h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e74c3c;
+    margin-bottom: 6px;
+  }
+
+  .warning-box p {
+    font-size: 13px;
+    color: #aaa;
+    line-height: 1.5;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 12px;
+    color: #555;
+  }
+
+  .footer a {
+    color: #666;
+    text-decoration: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="logo">
+  <h1>MaLauncher</h1>
+  <p>Minecraft: Java Edition for iOS</p>
+  <span class="badge">● STABLE</span>
+</div>
+
+<div class="section">
+  <h2>What's New <span class="release-tag">v3.0</span></h2>
+
+  <div class="changelog-item">
+    <div class="changelog-icon">🔓</div>
+    <div class="changelog-text">
+      <h3>No Microsoft Account Required</h3>
+      <p>Play with a local offline account or sign in with Microsoft. Your choice, no restrictions.</p>
+    </div>
+  </div>
+
+  <div class="changelog-item">
+    <div class="changelog-icon">⚡</div>
+    <div class="changelog-text">
+      <h3>Automatic JIT on Jailbroken Devices</h3>
+      <p>No AltServer, no PC, no setup. JIT enables itself the moment you launch on a jailbroken device.</p>
+    </div>
+  </div>
+
+  <div class="changelog-item">
+    <div class="changelog-icon">🖥️</div>
+    <div class="changelog-text">
+      <h3>ANGLE Metal Renderer</h3>
+      <p>Uses Apple's native Metal API for smooth performance on Minecraft 1.17 and above.</p>
+    </div>
+  </div>
+
+  <div class="changelog-item">
+    <div class="changelog-icon">☕</div>
+    <div class="changelog-text">
+      <h3>Half-JIT Runtime Included</h3>
+      <p>Non-jailbroken users with no way to enable JIT can now use the Half-JIT Java 8 runtime for a playable experience — no PC needed at all.</p>
+    </div>
+  </div>
+
+  <div class="changelog-item">
+    <div class="changelog-icon">📦</div>
+    <div class="changelog-text">
+      <h3>Self-Contained Build</h3>
+      <p>Java 8 and Java 17 runtimes are bundled directly in the app. No extra downloads needed after install.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="section">
+  <h2>Tips</h2>
+
+  <div class="tip-box">
+    <h3>🎮 Best Performance</h3>
+    <p>Use the <strong>ANGLE</strong> renderer for Minecraft 1.17+. For older versions (1.16 and below), use <strong>Holy GL4ES 1.1.5</strong>.</p>
+  </div>
+
+  <div class="tip-box">
+    <h3>☕ No JIT? Use Half-JIT</h3>
+    <p>If you can't enable JIT, go to <strong>Settings → Java Runtime</strong> and switch to <strong>java-8-openjdk-halfjit</strong>. It's slower but works without any external tools.</p>
+  </div>
+
+  <div class="tip-box">
+    <h3>🧩 Mod Compatibility</h3>
+    <p>Avoid <strong>Sodium</strong> and <strong>ImmediatelyFast</strong> — they are not compatible with iOS rendering. Use <strong>OptiFine</strong> instead for performance and shaders.</p>
+  </div>
+
+</div>
+
+<div class="section">
+  <h2>Known Issues</h2>
+
+  <div class="warning-box">
+    <h3>⚠️ Performance mods</h3>
+    <p>Mods that replace the rendering pipeline (Sodium, ImmediatelyFast) crash on iOS. Use OptiFine instead.</p>
+  </div>
+
+  <div class="warning-box">
+    <h3>⚠️ Non-jailbroken limitations</h3>
+    <p>Without JIT, performance is reduced. Half-JIT runtime is available as a workaround but expect slower gameplay on modern Minecraft versions.</p>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>MaLauncher — Open source, maintained by <a href="https://github.com/TomaTheLoser">TomaTheLoser</a></p>
+  <p style="margin-top:6px"><a href="https://github.com/TomaTheLoser/MaLauncher">View on GitHub</a></p>
+</div>
+
+</body>
+</html>

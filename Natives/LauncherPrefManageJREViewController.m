@@ -199,7 +199,7 @@ static WFWorkflowProgressView* currentProgressView;
                 if (extractError) {
                     showDialog(localize(@"Error", nil), extractError);
                 } else {
-                    [self loadJREList];
+                    [self addRuntimePath:outPath markInternal:NO];
                     [self.tableView reloadData];
                 }
             });

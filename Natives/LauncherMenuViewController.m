@@ -134,8 +134,6 @@
     [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
     [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
     
-    [self displayProgress:localize(@"login.jit.enabled", nil)];
-    [self displayProgress:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

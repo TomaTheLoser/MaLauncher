@@ -130,7 +130,9 @@ int hooked___fcntl(int fildes, int cmd, void *param) {
         
         // Check if the file is our "in-memory" file
         if (__fcntl(fildes, F_GETPATH, filePath) != -1) {
-            if (!strncmp(filePath, homeDir, strlen(homeDir))) {
+            BOOL inHomeDir = homeDir && !strncmp(filePath, homeDir, strlen(homeDir));
+            BOOL inDocuments = strstr(filePath, "/Documents/java_runtimes/") != NULL;
+            if (inHomeDir || inDocuments) {
                 fsignatures_t *fsig = (fsignatures_t*)param;
                 // called to check that cert covers file.. so we'll make it cover everything ;)
                 fsig->fs_file_start = 0xFFFFFFFF;

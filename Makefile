@@ -157,6 +157,11 @@ METHOD_JAVA_UNPACK = \
 			curl -L -o java8.zip "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_8_IOS/java-8-openjdk.zip"; \
 			unzip -o java8.zip; \
 			rm java8.zip; \
+		elif [ "$(1)" = "8-zero" ]; then \
+			curl -L -o java8-zero.tar.xz "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_8_Zero_iOS/jre8-zero.tar.xz"; \
+			tar -xJf java8-zero.tar.xz; \
+			mv java-8-openjdk java-8-zero-openjdk; \
+			rm java8-zero.tar.xz; \
 		elif [ "$(1)" = "17" ]; then \
 			curl -L -o java17.zip "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_17_IOS/java-17-openjdk.zip"; \
 			unzip -o java17.zip; \
@@ -282,18 +287,22 @@ jre: native
 	echo '[MaLauncher v$(VERSION)] jre - start'
 	mkdir -p $(SOURCEDIR)/depends
 	cd $(SOURCEDIR)/depends; \
-	$(call METHOD_JAVA_UNPACK,8,'https://nightly.link/PojavLauncherTeam/android-openjdk-build-multiarch/workflows/build/buildjre8/jre8-ios-aarch64.zip'); \
-	$(call METHOD_JAVA_UNPACK,17,'https://nightly.link/PojavLauncherTeam/android-openjdk-build-multiarch/workflows/build/buildjre17-21/jre17-ios-aarch64.zip'); \
-	$(call METHOD_JAVA_UNPACK,21,'https://nightly.link/PojavLauncherTeam/android-openjdk-build-multiarch/workflows/build/buildjre17-21/jre21-ios-aarch64.zip'); \
+	$(call METHOD_JAVA_UNPACK,8); \
+	$(call METHOD_JAVA_UNPACK,8-zero); \
+	$(call METHOD_JAVA_UNPACK,17); \
+	$(call METHOD_JAVA_UNPACK,21); \
 	cd $(SOURCEDIR); \
 	rm -rf $(SOURCEDIR)/depends/java-*-openjdk/{ASSEMBLY_EXCEPTION,bin,include,jre,legal,LICENSE,man,THIRD_PARTY_README,lib/{ct.sym,jspawnhelper,libjsig.dylib,src.zip,tools.jar}}; \
+	rm -rf $(SOURCEDIR)/depends/java-8-zero-openjdk/{ASSEMBLY_EXCEPTION,bin,include,jre,legal,LICENSE,man,THIRD_PARTY_README,lib/{ct.sym,jspawnhelper,libjsig.dylib,src.zip,tools.jar}}; \
 	$(call METHOD_DIRCHECK,$(OUTPUTDIR)/java_runtimes); \
 	cp -R $(POJAV_JRE8_DIR) $(OUTPUTDIR)/java_runtimes; \
 	cp -R $(POJAV_JRE17_DIR) $(OUTPUTDIR)/java_runtimes; \
 	if [ -d "$(POJAV_JRE21_DIR)" ]; then cp -R $(POJAV_JRE21_DIR) $(OUTPUTDIR)/java_runtimes; fi; \
+	if [ -d "$(SOURCEDIR)/depends/java-8-zero-openjdk" ]; then cp -R $(SOURCEDIR)/depends/java-8-zero-openjdk $(OUTPUTDIR)/java_runtimes; fi; \
 	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-8-openjdk/lib; \
 	cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-17-openjdk/lib; \
 	if [ -d "$(OUTPUTDIR)/java_runtimes/java-21-openjdk" ]; then cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-21-openjdk/lib; fi; \
+	if [ -d "$(OUTPUTDIR)/java_runtimes/java-8-zero-openjdk" ]; then cp $(WORKINGDIR)/libawt_xawt.dylib $(OUTPUTDIR)/java_runtimes/java-8-zero-openjdk/lib; fi; \
 	
 	echo '[MaLauncher v$(VERSION)] jre - end'
 

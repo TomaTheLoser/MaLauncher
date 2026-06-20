@@ -340,9 +340,20 @@ static WFWorkflowProgressView* currentProgressView;
         cell.accessoryView = nil;
     }
 
-    // Set checkmark; with internal runtime it's a bit tricky to check
-    if ([self.selectedRuntimes[version.stringValue] isEqualToString:name] ||
-      (isInternal && [self.selectedRuntimes[version.stringValue] isEqualToString:@"internal"])) {
+    // Set checkmark; internal runtimes are stored as "internal:<name>" so that
+    // multiple internal JREs sharing the same major version can be told apart.
+    NSString *selectedForVersion = self.selectedRuntimes[version.stringValue];
+    BOOL isSelected = NO;
+    if (isInternal) {
+        isSelected = [selectedForVersion isEqualToString:[NSString stringWithFormat:@"internal:%@", name]]
+            // Back-compat: older prefs may still have the bare "internal" sentinel
+            // from before this fix. Treat that as "first internal JRE in this version".
+            || ([selectedForVersion isEqualToString:@"internal"] && [name isEqualToString:self.javaRuntimes[version][0]]);
+    } else {
+        isSelected = [selectedForVersion isEqualToString:name];
+    }
+
+    if (isSelected) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else {
         cell.accessoryType = UITableViewCellAccessoryNone;
@@ -381,7 +392,7 @@ static WFWorkflowProgressView* currentProgressView;
     NSString *name = self.javaRuntimes[version][indexPath.row];
     BOOL isInternal = [objc_getAssociatedObject(name, @"internalJRE") boolValue];
     if (isInternal) {
-        self.selectedRuntimes[version.stringValue] = @"internal";
+        self.selectedRuntimes[version.stringValue] = [NSString stringWithFormat:@"internal:%@", name];
     } else {
         self.selectedRuntimes[version.stringValue] = name;
     }

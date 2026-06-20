@@ -121,7 +121,13 @@ NSString* getSelectedJavaHome(NSString* defaultJRETag, int minVersion) {
 
     id selectedDir = pref[selectedVer];
     if ([selectedDir isEqualToString:@"internal"]) {
+        // Back-compat: old prefs only stored the bare "internal" sentinel with
+        // no way to tell apart multiple internal JREs of the same version, so
+        // this always resolved to the "java-<ver>-openjdk" folder specifically.
         selectedDir = [NSString stringWithFormat:@"%@/java_runtimes/java-%@-openjdk", NSBundle.mainBundle.bundlePath, selectedVer];
+    } else if ([selectedDir hasPrefix:@"internal:"]) {
+        NSString *jreName = [selectedDir substringFromIndex:[@"internal:" length]];
+        selectedDir = [NSString stringWithFormat:@"%@/java_runtimes/%@", NSBundle.mainBundle.bundlePath, jreName];
     } else {
         selectedDir = [NSString stringWithFormat:@"%s/java_runtimes/%@", getenv("POJAV_HOME"), selectedDir];
     }

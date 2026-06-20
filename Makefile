@@ -152,15 +152,15 @@ METHOD_PACKAGE = \
 # Function to download and unpack Java runtimes.
 METHOD_JAVA_UNPACK = \
 	cd $(SOURCEDIR)/depends; \
-	if [ ! -f "java-$(1)-openjdk/release" ]; then \
+	if [ ! -f "java-$(1)-openjdk/release" ] && [ ! -f "java-8-zero-openjdk/release" ]; then \
 		if [ "$(1)" = "8" ]; then \
 			curl -L -o java8.zip "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_8_IOS/java-8-openjdk.zip"; \
 			unzip -o java8.zip; \
 			rm java8.zip; \
 		elif [ "$(1)" = "8-zero" ]; then \
+			mkdir -p java-8-zero-openjdk; \
 			curl -L -o java8-zero.tar.xz "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_8_Zero_iOS/jre8-zero.tar.xz"; \
-			tar -xJf java8-zero.tar.xz; \
-			mv java-8-openjdk java-8-zero-openjdk; \
+			tar -xJf java8-zero.tar.xz -C java-8-zero-openjdk; \
 			rm java8-zero.tar.xz; \
 		elif [ "$(1)" = "17" ]; then \
 			curl -L -o java17.zip "https://github.com/TomaTheLoser/MaLauncher/releases/download/Jre_17_IOS/java-17-openjdk.zip"; \

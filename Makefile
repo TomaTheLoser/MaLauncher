@@ -288,9 +288,9 @@ jre: native
 	mkdir -p $(SOURCEDIR)/depends
 	cd $(SOURCEDIR)/depends; \
 	$(call METHOD_JAVA_UNPACK,8); \
-	$(call METHOD_JAVA_UNPACK,8-zero); \
 	$(call METHOD_JAVA_UNPACK,17); \
 	$(call METHOD_JAVA_UNPACK,21); \
+	$(call METHOD_JAVA_UNPACK,8-zero); \
 	cd $(SOURCEDIR); \
 	rm -rf $(SOURCEDIR)/depends/java-*-openjdk/{ASSEMBLY_EXCEPTION,bin,include,jre,legal,LICENSE,man,THIRD_PARTY_README,lib/{ct.sym,jspawnhelper,libjsig.dylib,src.zip,tools.jar}}; \
 	rm -rf $(SOURCEDIR)/depends/java-8-zero-openjdk/{ASSEMBLY_EXCEPTION,bin,include,jre,legal,LICENSE,man,THIRD_PARTY_README,lib/{ct.sym,jspawnhelper,libjsig.dylib,src.zip,tools.jar}}; \

@@ -89,6 +89,12 @@ jobs:
           find . -name "*.java" -exec sed -i '' 's|"/PojavLauncher"|"/MaLauncher"|g' {} \;
           find . -name "*.java" -exec sed -i '' "s|'PojavLauncher'|'MaLauncher'|g" {} \;
 
+      - name: Compile MaLauncher launch screen
+        run: |
+          rm -rf Natives/resources/en.lproj/LaunchScreen.storyboardc
+          xcrun ibtool --compilation-directory Natives/resources/en.lproj Natives/resources/en.lproj/LaunchScreen.storyboard
+          ls Natives/resources/en.lproj/LaunchScreen.storyboardc
+
       - name: Build for iOS
         run: |
           export RUNNER=1
